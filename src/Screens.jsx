@@ -2,8 +2,6 @@ import { useState } from "react";
 import confetti from "canvas-confetti";
 import * as icons from "react-icons/gi";
 import { Tile } from "./Tile";
-import Sun from "./assets/sun.svg";
-import Moon from "./assets/moon.svg";
 
 export const possibleTileContents = [
   icons.GiHearts,
@@ -32,7 +30,7 @@ export function StartScreen({ start }) {
           </p>
           <button
             onClick={start}
-            className="text-white pt-2 pb-3 w-44 bg-pink-500 rounded-full text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105"
+            className="text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105"
           >
             Play
           </button>
