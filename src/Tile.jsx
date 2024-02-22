@@ -3,7 +3,7 @@ export function Tile({ content: Content, flip, state }) {
     case "start":
       return (
         <Back
-          className="inline-block size-10 sm:size-16 lg:size-20 bg-indigo-300 text-center rounded-lg cursor-pointer hover:ring-2 ring-indigo-200 transition-all duration-300 ease-out"
+          className="size-10 sm:size-16 lg:size-20 bg-indigo-300 text-center rounded-lg cursor-pointer hover:ring-2 ring-indigo-200 transition-all duration-300 ease-out flex items-center justify-center border-2 border-indigo-200"
           flip={flip}
         />
       );
@@ -39,7 +39,7 @@ export function Tile({ content: Content, flip, state }) {
 }
 
 function Back({ className, flip }) {
-  return <div onClick={flip} className={className}></div>;
+  return <div onClick={flip} className={className}><p className="text-white text-4xl font-black">?</p></div>;
 }
 
 function Front({ className, children }) {

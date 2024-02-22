@@ -131,9 +131,6 @@ export function PlayScreen({ mode, end, gridSize }) {
     setStartChallenge(false);
   };
 
-  console.log(scoresRef.current);
-  console.log(modalMessage);
-
   useEffect(() => {
     if ((mode === 'challenge' && cardFlipped) || (mode === 'normal' && level)) {
       if (remainingTime > 0) {
