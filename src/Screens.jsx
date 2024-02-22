@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import confetti from 'canvas-confetti';
 import * as icons from 'react-icons/gi';
 import { Tile } from './Tile';
@@ -17,62 +17,63 @@ export const possibleTileContents = [
   icons.GiOpenBook,
 ];
 
+const PlayMode = {
+  NORMAL: 'normal',
+  CHALLENGE: 'challenge',
+};
+
 export function StartScreen({ start, setGridSize, gridSize }) {
-  const handleNormalPlay = () => {
-    start('normal');
-  };
-  const handleChallengePlay = () => {
-    start('challenge');
-  };
   const handleGridSizeSelect = (size) => {
     setGridSize(size);
-    // start(size === '4x4' ? 16 : 25);
   };
-  return (
-    <>
-      <div className='grid min-h-screen place-content-center w-screen bg-white dark:bg-zinc-900 p-3'>
-        <div className='flex flex-col items-center bg-pink-50 dark:bg-gradient-to-tr dark:from-pink-400 dark:to-pink-600 rounded-xl pt-20 pb-20 w-[85vw] max-w-2xl'>
-          <h1 className='text-pink-500 dark:text-white text-4xl mb-10 font-semibold tracking-tight'>
-            Memory
-          </h1>
 
-          <p className='text-pink-500 dark:text-white mb-8 text-lg sm:text-xl lg:text-2xl font-medium text-center'>
-            Flip over tiles looking for pairs
-          </p>
-          <p className='text-pink-500 dark:text-white mb-8 text-lg sm:text-xl lg:text-2xl font-medium'>Grid chosen: {gridSize/4} x {gridSize/4}</p>
-          <div className="flex gap-6 mb-8 flex-wrap justify-center">
-            <button
-              onClick={() => handleGridSizeSelect(16)}
-              className={`text-white pt-2 pb-3 w-32 bg-gradient-to-t ${gridSize === 16 ? 'from-pink-900 to-pink-700' : 'from-pink-600 to-pink-400'}  rounded-full text-xl md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105`}>
-              4 x 4
-            </button>
-            <button
-              onClick={() => handleGridSizeSelect(20)}
-              className={`text-white pt-2 pb-3 w-32 bg-gradient-to-t ${gridSize === 20 ? 'from-pink-900 to-pink-700' : 'from-pink-600 to-pink-400'}  rounded-full text-xl md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105`}>
-              5 x 5
-            </button>
-          </div>
-          <div className='flex mt-6 gap-5 flex-wrap items-center'>
-            <div>
-          <button
-            onClick={handleNormalPlay}
-            className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-lg md:text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105 '>
-            Play
-          </button>
-          <p className=' text-rose-600 px-2 mt-2 rounded-md text-center text-sm dark:text-white'>*Single player mode</p>
-          </div>
-          <div>
-          <button
-            onClick={handleChallengePlay}
-            className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-lg md:text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105 '>
-            Challenge
-          </button>
-          <p className=' text-rose-600 px-2 mt-2 rounded-md text-center text-sm dark:text-white'>*Multi player mode</p>
-          </div>
-          </div>
+  const renderGridSizeButton = (size) => (
+    <button
+      onClick={() => handleGridSizeSelect(size)}
+      className={`text-white pt-2 pb-3 w-32 bg-gradient-to-t ${
+        gridSize === size
+          ? 'from-pink-900 to-pink-700 ring-pink-700'
+          : 'from-pink-600 to-pink-400 ring-pink-400'
+      } rounded-full text-xl md:text-2xl shadow-xl ring-2 transition-all duration-300 ease-out hover:scale-105`}>
+      {`${size / 4} x ${size / 4}`}
+    </button>
+  );
+
+  const renderPlayButton = (text, onClick) => (
+    <div>
+      <button
+        onClick={onClick}
+        className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-lg md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105 '>
+        {text}
+      </button>
+      <p className='text-rose-600 px-2 mt-2 rounded-md text-center text-sm dark:text-white'>
+        {text === 'Play' ? '*Single player mode' : '*Multi player mode'}
+      </p>
+    </div>
+  );
+
+  return (
+    <div className='grid min-h-screen place-content-center w-screen bg-white dark:bg-zinc-900 p-3'>
+      <div className='flex flex-col items-center bg-pink-50 dark:bg-gradient-to-tr dark:from-pink-400 dark:to-pink-600 rounded-xl pt-20 pb-20 w-[85vw] max-w-2xl'>
+        <h1 className='text-pink-500 dark:text-white text-4xl mb-10 font-semibold tracking-tight'>
+          Memory
+        </h1>
+        <p className='text-pink-500 dark:text-white mb-8 text-lg sm:text-xl lg:text-2xl font-medium text-center'>
+          Flip over tiles looking for pairs
+        </p>
+        <p className='text-pink-500 dark:text-white mb-8 text-lg sm:text-xl lg:text-2xl font-medium'>
+          Grid chosen: {gridSize / 4} x {gridSize / 4}
+        </p>
+        <div className='flex gap-6 mb-8 flex-wrap justify-center'>
+          {renderGridSizeButton(16)}
+          {renderGridSizeButton(20)}
+        </div>
+        <div className='flex mt-6 gap-5 flex-wrap items-center justify-center'>
+          {renderPlayButton('Play', () => start(PlayMode.NORMAL))}
+          {renderPlayButton('Challenge', () => start(PlayMode.CHALLENGE))}
         </div>
       </div>
-    </>
+    </div>
   );
 }
 
@@ -82,7 +83,7 @@ export function PlayScreen({ mode, end, gridSize }) {
   const [remainingTime, setRemainingTime] = useState(300);
   const [level, setLevel] = useState('');
   const [currentPlayer, setCurrentPlayer] = useState(1);
-  const [scores, setScores] = useState({ player1: 0, player2: 0 });
+  const scoresRef = useRef({ player1: 0, player2: 0 });
   const [cardFlipped, setCardFlipped] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState({
@@ -123,12 +124,15 @@ export function PlayScreen({ mode, end, gridSize }) {
     setTryCount(0);
     setLevel('');
     setCurrentPlayer(1);
-    setScores({ player1: 0, player2: 0 });
+    scoresRef.current = { player1: 0, player2: 0 };
     setRemainingTime(300);
     setCardFlipped(false);
     setPlayerNames({ player1: '', player2: '' });
     setStartChallenge(false);
   };
+
+  console.log(scoresRef.current);
+  console.log(modalMessage);
 
   useEffect(() => {
     if ((mode === 'challenge' && cardFlipped) || (mode === 'normal' && level)) {
@@ -201,10 +205,6 @@ export function PlayScreen({ mode, end, gridSize }) {
     // On the second flip, check if the tiles match.
     if (flippedCount === 1) {
       setTryCount((c) => c + 1);
-      setTimeout(() => {
-        setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? 2 : 1));
-      }, 1000);
-
       const alreadyFlippedTile = flippedTiles[0];
       const justFlippedTile = tiles[i];
 
@@ -216,11 +216,15 @@ export function PlayScreen({ mode, end, gridSize }) {
         });
         newState = 'matched';
 
-        setScores((prevScores) => ({
-          ...prevScores,
-          [`player${currentPlayer}`]: prevScores[`player${currentPlayer}`] + 1,
-        }));
+        scoresRef.current = {
+          ...scoresRef.current,
+          [`player${currentPlayer}`]: scoresRef.current[`player${currentPlayer}`] + 1,
+        };
       }
+
+      setTimeout(() => {
+        setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? 2 : 1));
+      }, 1000);
 
       // After a delay, either flip the tiles back or mark them as matched.
       setTimeout(() => {
@@ -232,7 +236,6 @@ export function PlayScreen({ mode, end, gridSize }) {
 
           // If all tiles are matched, the game is over.
           if (newTiles.every((tile) => tile.state === 'matched')) {
-            setShowModal(true);
 
             if (mode === 'normal') {
               setModalMessage({
@@ -243,23 +246,26 @@ export function PlayScreen({ mode, end, gridSize }) {
                 status: 'success',
               });
             } else {
-              if (scores.player1 === scores.player2) {
-                // Condition for a draw
+              const { player1, player2 } = scoresRef.current;
+
+              if (player1 === player2) {
                 setModalMessage({
-                  message: `It's a draw! Both players scored ${scores.player1} points.`,
+                  message: `It's a draw! Both players scored ${player1} points.`,
                   title: 'Game Completed',
                   status: 'draw',
                 });
               } else {
                 setModalMessage({
-                  message: `${playerNames.player1} scored ${
-                    scores.player1
-                  } points. ${playerNames.player2} scored ${
-                    scores.player2
-                  } points. ${
-                    scores.player1 > scores.player2
-                      ? playerNames.player1
-                      : playerNames.player2
+                  message: `${playerNames.player1 || 'Player 1'} scored ${
+                    player1
+                  } point${player1 > 1 ? 's' : ''}. ${
+                    playerNames.player2 || 'Player 2'
+                  } scored ${player2} point${
+                    player2 > 1 ? 's' : ''
+                  }. ${
+                    player1 > player2
+                      ? playerNames.player1 || 'Player 1'
+                      : playerNames.player2 || 'Player 2'
                   } wins!`,
                   title: 'Game Completed',
                   status: 'success',
@@ -267,7 +273,8 @@ export function PlayScreen({ mode, end, gridSize }) {
               }
             }
 
-            // setTimeout(end, 0);
+            setShowModal(true);
+
             setTimeout(() => {
               resetGame();
             }, 3000);
@@ -302,17 +309,17 @@ export function PlayScreen({ mode, end, gridSize }) {
             <div className='flex justify-center gap-4 flex-wrap mb-6'>
               <button
                 onClick={() => handleLevelSelect('easy')}
-                className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-xl md:text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105'>
+                className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-xl md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105'>
                 Easy
               </button>
               <button
                 onClick={() => handleLevelSelect('medium')}
-                className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-xl md:text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105'>
+                className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-xl md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105'>
                 Medium
               </button>
               <button
                 onClick={() => handleLevelSelect('hard')}
-                className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-xl md:text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105'>
+                className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-xl md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105'>
                 Hard
               </button>
             </div>
@@ -336,7 +343,7 @@ export function PlayScreen({ mode, end, gridSize }) {
                 placeholder='Player 1 Name'
                 value={playerNames.player1}
                 onChange={(e) => handlePlayerNameChange(e, 'player1')}
-                className='block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full'
+                className='block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-pink-500 dark:bg-transparent dark:text-white w-full'
               />
             </div>
             <div className='flex items-center mt-4 gap-4'>
@@ -346,7 +353,7 @@ export function PlayScreen({ mode, end, gridSize }) {
                 placeholder='Player 2 Name'
                 value={playerNames.player2}
                 onChange={(e) => handlePlayerNameChange(e, 'player2')}
-                className='block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full'
+                className='block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-pink-500 dark:bg-transparent dark:text-white w-full'
               />
             </div>
             <div className='flex flex-wrap mt-8 gap-4 items-center justify-center'>
@@ -391,7 +398,7 @@ export function PlayScreen({ mode, end, gridSize }) {
                   <div className='text-indigo-400 dark:text-white text-2xl lg:text-3xl font-medium'>
                     Tries
                   </div>
-                  <div className='px-3 lg:pb-1 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
+                  <div className='px-3 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
                     {tryCount}
                   </div>
                 </div>
@@ -400,12 +407,17 @@ export function PlayScreen({ mode, end, gridSize }) {
                   <div className='text-indigo-400 dark:text-white text-2xl lg:text-3xl font-medium'>
                     Time
                   </div>
-                  <div className='px-3 lg:pb-1 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
+                  <div className='px-3 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
                     {formatTime(remainingTime)}
                   </div>
                 </div>
               </div>
-              <div className={`grid ${gridSize === 16 ? 'grid-cols-4 gap-5 p-5' : 'grid-cols-5 gap-3 p-3'} mx-auto bg-indigo-50 rounded-lg dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900`}>
+              <div
+                className={`grid ${
+                  gridSize === 16
+                    ? 'grid-cols-4 gap-5 p-5'
+                    : 'grid-cols-5 gap-3 p-3'
+                } mx-auto bg-indigo-50 rounded-lg dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900`}>
                 {getTiles(gridSize).map((tile, i) => (
                   <Tile key={i} flip={() => flip(i)} {...tile} />
                 ))}
@@ -436,7 +448,7 @@ export function PlayScreen({ mode, end, gridSize }) {
                     {playerNames.player1 || 'Player 1'}
                   </div>
                   <div className='px-3 lg:pb-1 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
-                    {scores.player1}
+                  {scoresRef.current.player1}
                   </div>
                 </div>
 
@@ -445,7 +457,7 @@ export function PlayScreen({ mode, end, gridSize }) {
                     {playerNames.player2 || 'Player 2'}
                   </div>
                   <div className='px-3 lg:pb-1 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
-                    {scores.player2}
+                  {scoresRef.current.player2}
                   </div>
                 </div>
               </div>
