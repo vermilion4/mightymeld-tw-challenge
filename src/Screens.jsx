@@ -300,7 +300,7 @@ export function PlayScreen({ mode, end }) {
             <input
               type="text"
               placeholder="Player 1 Name"
-              value={playerNames.player1 || 'Player 1'}
+              value={playerNames.player1}
               onChange={(e) => handlePlayerNameChange(e, 'player1')}
               className="block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full"
             />
@@ -310,7 +310,7 @@ export function PlayScreen({ mode, end }) {
             <input
               type="text"
               placeholder="Player 2 Name"
-              value={playerNames.player2 || 'Player 2'}
+              value={playerNames.player2}
               onChange={(e) => handlePlayerNameChange(e, 'player2')}
               className="block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full"
             />
