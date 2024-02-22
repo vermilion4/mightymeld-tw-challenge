@@ -17,12 +17,16 @@ export const possibleTileContents = [
   icons.GiOpenBook,
 ];
 
-export function StartScreen({ start }) {
+export function StartScreen({ start, setGridSize, gridSize }) {
   const handleNormalPlay = () => {
     start('normal');
   };
   const handleChallengePlay = () => {
     start('challenge');
+  };
+  const handleGridSizeSelect = (size) => {
+    setGridSize(size);
+    // start(size === '4x4' ? 16 : 25);
   };
   return (
     <>
@@ -32,26 +36,47 @@ export function StartScreen({ start }) {
             Memory
           </h1>
 
-          <p className='text-pink-500 dark:text-white mb-16 text-lg sm:text-xl lg:text-2xl font-medium'>
+          <p className='text-pink-500 dark:text-white mb-8 text-lg sm:text-xl lg:text-2xl font-medium text-center'>
             Flip over tiles looking for pairs
           </p>
+          <p className='text-pink-500 dark:text-white mb-8 text-lg sm:text-xl lg:text-2xl font-medium'>Grid chosen: {gridSize/4} x {gridSize/4}</p>
+          <div className="flex gap-6 mb-8 flex-wrap justify-center">
+            <button
+              onClick={() => handleGridSizeSelect(16)}
+              className={`text-white pt-2 pb-3 w-32 bg-gradient-to-t ${gridSize === 16 ? 'from-pink-900 to-pink-700' : 'from-pink-600 to-pink-400'}  rounded-full text-xl md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105`}>
+              4 x 4
+            </button>
+            <button
+              onClick={() => handleGridSizeSelect(20)}
+              className={`text-white pt-2 pb-3 w-32 bg-gradient-to-t ${gridSize === 20 ? 'from-pink-900 to-pink-700' : 'from-pink-600 to-pink-400'}  rounded-full text-xl md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105`}>
+              5 x 5
+            </button>
+          </div>
+          <div className='flex mt-6 gap-5 flex-wrap items-center'>
+            <div>
           <button
             onClick={handleNormalPlay}
-            className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105'>
+            className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-lg md:text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105 '>
             Play
           </button>
+          <p className=' text-rose-600 px-2 mt-2 rounded-md text-center text-sm dark:text-white'>*Single player mode</p>
+          </div>
+          <div>
           <button
             onClick={handleChallengePlay}
-            className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105 mt-6'>
+            className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-lg md:text-3xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105 '>
             Challenge
           </button>
+          <p className=' text-rose-600 px-2 mt-2 rounded-md text-center text-sm dark:text-white'>*Multi player mode</p>
+          </div>
+          </div>
         </div>
       </div>
     </>
   );
 }
 
-export function PlayScreen({ mode, end }) {
+export function PlayScreen({ mode, end, gridSize }) {
   const [tiles, setTiles] = useState(null);
   const [tryCount, setTryCount] = useState(0);
   const [remainingTime, setRemainingTime] = useState(300);
@@ -380,8 +405,8 @@ export function PlayScreen({ mode, end }) {
                   </div>
                 </div>
               </div>
-              <div className='grid grid-cols-4 mx-auto gap-5 p-5 bg-indigo-50 rounded-lg dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900'>
-                {getTiles(16).map((tile, i) => (
+              <div className={`grid ${gridSize === 16 ? 'grid-cols-4 gap-5 p-5' : 'grid-cols-5 gap-3 p-3'} mx-auto bg-indigo-50 rounded-lg dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900`}>
+                {getTiles(gridSize).map((tile, i) => (
                   <Tile key={i} flip={() => flip(i)} {...tile} />
                 ))}
               </div>

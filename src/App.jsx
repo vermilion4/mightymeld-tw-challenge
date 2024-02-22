@@ -6,7 +6,9 @@ import Moon from "./assets/moon.svg";
 function App() {
   const [gameState, setGameState] = useState("start");
   const [theme, setTheme] = useState("light");
-  const [mode, setMode] = useState(null)
+  const [mode, setMode] = useState(null);
+  const [gridSize, setGridSize] = useState(16);
+
 
   useEffect(() => {
     if (theme === "light") {
@@ -42,7 +44,7 @@ function App() {
           <StartScreen start={(mode) => {
           setMode(mode);
           setGameState("play");
-          }} />
+          }} gridSize={gridSize} setGridSize={setGridSize} />
         </>
       );
     case "play":
@@ -66,7 +68,7 @@ function App() {
               />
             </div>
           </div>
-          <PlayScreen mode={mode} end={() => setGameState("start")} />
+          <PlayScreen gridSize={gridSize} mode={mode} end={() => setGameState("start")} />
         </>
       );
     default:
