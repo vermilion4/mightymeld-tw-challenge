@@ -26,7 +26,7 @@ export function StartScreen({ start }) {
   };
   return (
     <>
-      <div className='grid min-h-screen place-content-center w-screen bg-white dark:bg-zinc-900'>
+      <div className='grid min-h-screen place-content-center w-screen bg-white dark:bg-zinc-900 p-3'>
         <div className='flex flex-col items-center bg-pink-50 dark:bg-gradient-to-tr dark:from-pink-400 dark:to-pink-600 rounded-xl pt-20 pb-20 w-[85vw] max-w-2xl'>
           <h1 className='text-pink-500 dark:text-white text-4xl mb-10 font-semibold'>
             Memory
@@ -60,7 +60,13 @@ export function PlayScreen({ mode, end }) {
   const [scores, setScores] = useState({ player1: 0, player2: 0 });
   const [cardFlipped, setCardFlipped] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [modalMessage, setModalMessage] = useState('');
+  const [modalMessage, setModalMessage] = useState({
+    message: '',
+    title: '',
+    status: '',
+  });
+  const [playerNames, setPlayerNames] = useState({ player1: '', player2: '' });
+  const [startChallenge, setStartChallenge] = useState(false);
 
   const startTimer = (selectedLevel) => {
     if (mode === 'normal') {
@@ -77,7 +83,11 @@ export function PlayScreen({ mode, end }) {
   };
 
   const stopGame = () => {
-    setModalMessage("Time's up! Game over. You could not complete the challenge in time");
+    setModalMessage({
+      message: "Time's up! Game over. You could not complete the challenge in time",
+      title: 'Game Over',
+      status: 'failure',
+    });
     setShowModal(true);
     resetGame();
   };
@@ -90,6 +100,8 @@ export function PlayScreen({ mode, end }) {
     setScores({ player1: 0, player2: 0 });
     setRemainingTime(300);
     setCardFlipped(false);
+    setPlayerNames({ player1: '', player2: '' });
+    setStartChallenge(false);
   };
 
   useEffect(() => {
@@ -195,9 +207,30 @@ export function PlayScreen({ mode, end }) {
           // If all tiles are matched, the game is over.
           if (newTiles.every((tile) => tile.state === 'matched')) {
             setShowModal(true);
-            {
-              mode === 'normal' ? setModalMessage(`Congratulations! You completed the game in ${tryCount} tries. With ${formatTime(remainingTime)} left on the clock.`) :  
-              setModalMessage(`Game completed! Player 1 scored ${scores.player1} points. Player 2 scored ${scores.player2} points. ${scores.player1 > scores.player2 ? 'Player 1' : 'Player 2'} wins!`);
+            
+            if (mode === 'normal') {
+              setModalMessage({
+                message: `You completed the game in ${tryCount} tries. With ${formatTime(remainingTime)} left on the clock.`,
+                title: 'Congratulations',
+                status: 'success',
+              });
+            } else {
+              if (scores.player1 === scores.player2) {
+                // Condition for a draw
+                setModalMessage({
+                  message: `It's a draw! Both players scored ${scores.player1} points.`,
+                  title: 'Game Completed',
+                  status: 'draw',
+                });
+              } else {
+                setModalMessage({
+                  message: `${playerNames.player1} scored ${scores.player1} points. ${playerNames.player2} scored ${scores.player2} points. ${
+                    scores.player1 > scores.player2 ? playerNames.player1 : playerNames.player2
+                  } wins!`,
+                  title: 'Game Completed',
+                  status: 'success',
+                });
+              }
             }
      
             // setTimeout(end, 0);
@@ -219,9 +252,15 @@ export function PlayScreen({ mode, end }) {
     });
   };
 
+  const handlePlayerNameChange = (event, player) => {
+    const { value } = event.target;
+    setPlayerNames((prevNames) => ({ ...prevNames, [player]: value }));
+  };
+
+
   return (
     <>
-      <div className='grid w-screen min-h-screen place-content-center bg-white dark:bg-gradient-to-r dark:from-zinc-800 dark:to-zinc-900'>
+      <div className='grid w-screen min-h-screen place-content-center bg-white dark:bg-gradient-to-r dark:from-zinc-800 dark:to-zinc-900 px-3'>
         {mode === 'normal' && !level && (
           <>
             <h2 className='text-3xl text-center mb-6 font-bold text-pink-600 dark:text-white'>
@@ -252,16 +291,64 @@ export function PlayScreen({ mode, end }) {
             </button>
           </>
         )}
-        {(mode === 'normal' && level) || mode === 'challenge' ? (
+        {
+          mode === 'challenge' && !startChallenge && (
+            <div className={`text-center mt-4 dark:text-white w-[80vw] max-w-md`}>
+              <h2 className='text-xl pb-5'>Enter Names of Challengers</h2>
+              <div className='flex items-center mt-4 gap-4'>
+              <label className='whitespace-nowrap'>Player 1</label>
+            <input
+              type="text"
+              placeholder="Player 1 Name"
+              value={playerNames.player1 || 'Player 1'}
+              onChange={(e) => handlePlayerNameChange(e, 'player1')}
+              className="block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full"
+            />
+            </div>
+            <div className='flex items-center mt-4 gap-4'>
+              <label className='whitespace-nowrap'>Player 2</label>
+            <input
+              type="text"
+              placeholder="Player 2 Name"
+              value={playerNames.player2 || 'Player 2'}
+              onChange={(e) => handlePlayerNameChange(e, 'player2')}
+              className="block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full"
+            />
+            </div>
+            <div className='flex flex-wrap mt-8 gap-4 items-center justify-center'>
+            <button
+                onClick={() => setStartChallenge(true)}
+                className='text-white bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-lg md:text-xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105 p-3'>
+                Start Game
+              </button>
+              <button
+              className='bg-white shadow hover:scale-105 transition-all ease-in-out duration-300 text-xl md:text-xl rounded-full text-pink-500  border border-grey-400 p-3'
+              onClick={() => setTimeout(end, 0)}>
+              Back to Home
+            </button>
+            </div>
+      
+          </div>
+          )
+        }
+        {(mode === 'normal' && level) || (mode === 'challenge' && startChallenge) ? (
           <div className='lg:flex items-center gap-10'>
             <div>
               <div className='text-center mb-4'>
+                {mode === 'challenge' && (
+                    <p
+                    className={`text-xl font-semibold text-indigo-500 dark:text-white mb-4 capitalize`}>
+                    
+                      {playerNames.player1 || 'Player 1'} vs {playerNames.player2 || 'Player 2'}
+                  </p>
+                )}
                 <p
                   className={`text-xl font-semibold text-indigo-500 dark:text-white mt-4 capitalize`}>
                   {mode === 'normal'
                     ? `${level} Mode`
-                    : `Current Player: Player${currentPlayer}`}
+                    : `Current Player Turn: ${currentPlayer === 1 ? playerNames.player1 || 'Player 1' : playerNames.player2 || 'Player 2'}`}
                 </p>
+              
               </div>
               <div className='flex gap-3 justify-between mb-12 items-center'>
                 <div className='flex gap-3 items-center'>
@@ -309,8 +396,8 @@ export function PlayScreen({ mode, end }) {
               </p>
               <div className='flex lg:flex-col gap-5 justify-between mt-6 items-center'>
                 <div className='flex gap-3 items-center'>
-                  <div className='text-indigo-400 dark:text-white text-2xl lg:text-3xl font-medium'>
-                    Player 1
+                  <div className='text-indigo-400 dark:text-white text-2xl lg:text-3xl font-medium capitalize'>
+                    {playerNames.player1 || 'Player 1'}
                   </div>
                   <div className='px-3 lg:pb-1 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
                     {scores.player1}
@@ -318,8 +405,8 @@ export function PlayScreen({ mode, end }) {
                 </div>
 
                 <div className='flex gap-3 items-center'>
-                  <div className='text-indigo-400 dark:text-white text-2xl lg:text-3xl font-medium'>
-                    Player 2
+                  <div className='text-indigo-400 dark:text-white text-2xl lg:text-3xl font-medium capitalize'>
+                    {playerNames.player2 || 'Player 2'}
                   </div>
                   <div className='px-3 lg:pb-1 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
                     {scores.player2}
@@ -330,7 +417,7 @@ export function PlayScreen({ mode, end }) {
           </div>
         ) : null}
       </div>
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} message={modalMessage} />
+      <Modal isOpen={showModal} onClose={() => setShowModal(false)} message={modalMessage.message} status={modalMessage.status} title={modalMessage.title} />
     </>
   );
 }
