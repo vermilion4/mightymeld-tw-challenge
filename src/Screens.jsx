@@ -28,7 +28,7 @@ export function StartScreen({ start }) {
     <>
       <div className='grid min-h-screen place-content-center w-screen bg-white dark:bg-zinc-900 p-3'>
         <div className='flex flex-col items-center bg-pink-50 dark:bg-gradient-to-tr dark:from-pink-400 dark:to-pink-600 rounded-xl pt-20 pb-20 w-[85vw] max-w-2xl'>
-          <h1 className='text-pink-500 dark:text-white text-4xl mb-10 font-semibold'>
+          <h1 className='text-pink-500 dark:text-white text-4xl mb-10 font-semibold tracking-tight'>
             Memory
           </h1>
 
@@ -84,7 +84,8 @@ export function PlayScreen({ mode, end }) {
 
   const stopGame = () => {
     setModalMessage({
-      message: "Time's up! Game over. You could not complete the challenge in time",
+      message:
+        "Time's up! Game over. You could not complete the challenge in time",
       title: 'Game Over',
       status: 'failure',
     });
@@ -207,10 +208,12 @@ export function PlayScreen({ mode, end }) {
           // If all tiles are matched, the game is over.
           if (newTiles.every((tile) => tile.state === 'matched')) {
             setShowModal(true);
-            
+
             if (mode === 'normal') {
               setModalMessage({
-                message: `You completed the game in ${tryCount} tries. With ${formatTime(remainingTime)} left on the clock.`,
+                message: `You completed the game in ${tryCount} tries. With ${formatTime(
+                  remainingTime
+                )} left on the clock.`,
                 title: 'Congratulations',
                 status: 'success',
               });
@@ -224,15 +227,21 @@ export function PlayScreen({ mode, end }) {
                 });
               } else {
                 setModalMessage({
-                  message: `${playerNames.player1} scored ${scores.player1} points. ${playerNames.player2} scored ${scores.player2} points. ${
-                    scores.player1 > scores.player2 ? playerNames.player1 : playerNames.player2
+                  message: `${playerNames.player1} scored ${
+                    scores.player1
+                  } points. ${playerNames.player2} scored ${
+                    scores.player2
+                  } points. ${
+                    scores.player1 > scores.player2
+                      ? playerNames.player1
+                      : playerNames.player2
                   } wins!`,
                   title: 'Game Completed',
                   status: 'success',
                 });
               }
             }
-     
+
             // setTimeout(end, 0);
             setTimeout(() => {
               resetGame();
@@ -256,7 +265,6 @@ export function PlayScreen({ mode, end }) {
     const { value } = event.target;
     setPlayerNames((prevNames) => ({ ...prevNames, [player]: value }));
   };
-
 
   return (
     <>
@@ -291,64 +299,67 @@ export function PlayScreen({ mode, end }) {
             </button>
           </>
         )}
-        {
-          mode === 'challenge' && !startChallenge && (
-            <div className={`text-center mt-4 dark:text-white w-[80vw] max-w-md`}>
-              <h2 className='text-xl pb-5'>Enter Names of Challengers</h2>
-              <div className='flex items-center mt-4 gap-4'>
+        {mode === 'challenge' && !startChallenge && (
+          <div className={`text-center mt-4 dark:text-white w-[80vw] max-w-md`}>
+            <h2 className='text-xl pb-5 text-pink-500 dark:text-white'>
+              Enter Names of Challengers
+            </h2>
+            <div className='flex items-center mt-4 gap-4'>
               <label className='whitespace-nowrap'>Player 1</label>
-            <input
-              type="text"
-              placeholder="Player 1 Name"
-              value={playerNames.player1}
-              onChange={(e) => handlePlayerNameChange(e, 'player1')}
-              className="block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full"
-            />
+              <input
+                type='text'
+                placeholder='Player 1 Name'
+                value={playerNames.player1}
+                onChange={(e) => handlePlayerNameChange(e, 'player1')}
+                className='block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full'
+              />
             </div>
             <div className='flex items-center mt-4 gap-4'>
               <label className='whitespace-nowrap'>Player 2</label>
-            <input
-              type="text"
-              placeholder="Player 2 Name"
-              value={playerNames.player2}
-              onChange={(e) => handlePlayerNameChange(e, 'player2')}
-              className="block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full"
-            />
+              <input
+                type='text'
+                placeholder='Player 2 Name'
+                value={playerNames.player2}
+                onChange={(e) => handlePlayerNameChange(e, 'player2')}
+                className='block border border-gray-300 p-2 rounded-md focus:outline-none focus:border-indigo-500 dark:bg-transparent dark:text-white w-full'
+              />
             </div>
             <div className='flex flex-wrap mt-8 gap-4 items-center justify-center'>
-            <button
+              <button
                 onClick={() => setStartChallenge(true)}
                 className='text-white bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-lg md:text-xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105 p-3'>
                 Start Game
               </button>
               <button
-              className='bg-white shadow hover:scale-105 transition-all ease-in-out duration-300 text-xl md:text-xl rounded-full text-pink-500  border border-grey-400 p-3'
-              onClick={() => setTimeout(end, 0)}>
-              Back to Home
-            </button>
+                className='bg-white shadow hover:scale-105 transition-all ease-in-out duration-300 text-xl md:text-xl rounded-full text-pink-500  border border-grey-400 p-3'
+                onClick={() => setTimeout(end, 0)}>
+                Back to Home
+              </button>
             </div>
-      
           </div>
-          )
-        }
-        {(mode === 'normal' && level) || (mode === 'challenge' && startChallenge) ? (
+        )}
+        {(mode === 'normal' && level) ||
+        (mode === 'challenge' && startChallenge) ? (
           <div className='lg:flex items-center gap-10'>
             <div>
               <div className='text-center mb-4'>
                 {mode === 'challenge' && (
-                    <p
+                  <p
                     className={`text-xl font-semibold text-indigo-500 dark:text-white mb-4 capitalize`}>
-                    
-                      {playerNames.player1 || 'Player 1'} vs {playerNames.player2 || 'Player 2'}
+                    {playerNames.player1 || 'Player 1'} vs{' '}
+                    {playerNames.player2 || 'Player 2'}
                   </p>
                 )}
                 <p
                   className={`text-xl font-semibold text-indigo-500 dark:text-white mt-4 capitalize`}>
                   {mode === 'normal'
                     ? `${level} Mode`
-                    : `Current Player Turn: ${currentPlayer === 1 ? playerNames.player1 || 'Player 1' : playerNames.player2 || 'Player 2'}`}
+                    : `Current Player Turn: ${
+                        currentPlayer === 1
+                          ? playerNames.player1 || 'Player 1'
+                          : playerNames.player2 || 'Player 2'
+                      }`}
                 </p>
-              
               </div>
               <div className='flex gap-3 justify-between mb-12 items-center'>
                 <div className='flex gap-3 items-center'>
@@ -417,7 +428,13 @@ export function PlayScreen({ mode, end }) {
           </div>
         ) : null}
       </div>
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} message={modalMessage.message} status={modalMessage.status} title={modalMessage.title} />
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        message={modalMessage.message}
+        status={modalMessage.status}
+        title={modalMessage.title}
+      />
     </>
   );
 }
