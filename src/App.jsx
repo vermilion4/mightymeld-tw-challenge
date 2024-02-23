@@ -33,7 +33,7 @@ function App() {
 
   return (
     <>
-      <div className='absolute flex justify-between w-full px-6 items-center gap-2 text-lg lg:text-xl bg-white dark:bg-zinc-900 py-3 border-b border-gray-300 shadow'>
+      <div className='top-0 flex justify-between w-full px-6 items-center gap-2 text-lg lg:text-xl bg-white dark:bg-gradient-to-r dark:from-zinc-800 dark:to-zinc-900 py-3 border-b border-gray-300 shadow fixed'>
         <button
           onClick={() => {
             if (!showLeaderboard) {

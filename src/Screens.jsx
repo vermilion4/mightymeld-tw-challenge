@@ -4,6 +4,7 @@ import * as icons from 'react-icons/gi';
 import { Tile } from './Tile';
 import Modal from './Modal';
 import { updateChallLeaderboard, updateLeaderboard } from './Leaderboard';
+import Sound from './assets/play.mp3';
 
 export const possibleTileContents = [
   icons.GiHearts,
@@ -78,7 +79,15 @@ export function StartScreen({ start, setGridSize, gridSize }) {
   );
 }
 
-export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboardData, challengeLeaderboard, setChallengeLeaderboard }) {
+export function PlayScreen({
+  mode,
+  end,
+  gridSize,
+  leaderboardData,
+  setLeaderboardData,
+  challengeLeaderboard,
+  setChallengeLeaderboard,
+}) {
   const [tiles, setTiles] = useState(null);
   const [tryCount, setTryCount] = useState(0);
   const [remainingTime, setRemainingTime] = useState(300);
@@ -94,6 +103,18 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
   });
   const [playerNames, setPlayerNames] = useState({ player1: '', player2: '' });
   const [startChallenge, setStartChallenge] = useState(false);
+  const [backgroundMusicPlaying, setBackgroundMusicPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  const playBackgroundMusic = () => {
+    audioRef.current.play();
+    setBackgroundMusicPlaying(true);
+  };
+
+  const stopBackgroundMusic = () => {
+    audioRef.current.pause();
+    setBackgroundMusicPlaying(false);
+  };
 
   const startTimer = (selectedLevel) => {
     if (mode === 'normal') {
@@ -130,6 +151,7 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
     setCardFlipped(false);
     setPlayerNames({ player1: '', player2: '' });
     setStartChallenge(false);
+    stopBackgroundMusic();
   };
 
   useEffect(() => {
@@ -216,7 +238,8 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
 
         scoresRef.current = {
           ...scoresRef.current,
-          [`player${currentPlayer}`]: scoresRef.current[`player${currentPlayer}`] + 1,
+          [`player${currentPlayer}`]:
+            scoresRef.current[`player${currentPlayer}`] + 1,
         };
       }
 
@@ -234,7 +257,6 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
 
           // If all tiles are matched, the game is over.
           if (newTiles.every((tile) => tile.state === 'matched')) {
-
             if (mode === 'normal') {
               setModalMessage({
                 message: `You completed the game in ${tryCount} tries. With ${formatTime(
@@ -254,13 +276,11 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
                 });
               } else {
                 setModalMessage({
-                  message: `${playerNames.player1 || 'Player 1'} scored ${
-                    player1
-                  } point${player1 > 1 ? 's' : ''}. ${
+                  message: `${
+                    playerNames.player1 || 'Player 1'
+                  } scored ${player1} point${player1 > 1 ? 's' : ''}. ${
                     playerNames.player2 || 'Player 2'
-                  } scored ${player2} point${
-                    player2 > 1 ? 's' : ''
-                  }. ${
+                  } scored ${player2} point${player2 > 1 ? 's' : ''}. ${
                     player1 > player2
                       ? playerNames.player1 || 'Player 1'
                       : playerNames.player2 || 'Player 2'
@@ -273,21 +293,34 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
 
             setShowModal(true);
 
-     
-              if (mode === 'normal') {
-                // Update normal play leaderboard
-                updateLeaderboard(leaderboardData, setLeaderboardData, level, 'You', tryCount); 
-              } else {
-                const currentDate = new Date();
-                const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
-                updateChallLeaderboard(challengeLeaderboard, setChallengeLeaderboard, playerNames.player1, playerNames.player2, formattedDate, scoresRef.current.player1, scoresRef.current.player2);
-              }
+            if (mode === 'normal') {
+              // Update normal play leaderboard
+              updateLeaderboard(
+                leaderboardData,
+                setLeaderboardData,
+                level,
+                'You',
+                tryCount
+              );
+            } else {
+              const currentDate = new Date();
+              const formattedDate = `${
+                currentDate.getMonth() + 1
+              }/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+              updateChallLeaderboard(
+                challengeLeaderboard,
+                setChallengeLeaderboard,
+                playerNames.player1,
+                playerNames.player2,
+                formattedDate,
+                scoresRef.current.player1,
+                scoresRef.current.player2
+              );
+            }
 
-              setTimeout(()=>{
-                resetGame();
-              },3000)
-           
-        
+            setTimeout(() => {
+              resetGame();
+            }, 3000);
           }
 
           return newTiles;
@@ -310,7 +343,7 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
 
   return (
     <>
-      <div className='grid w-screen min-h-screen place-content-center bg-white dark:bg-gradient-to-r dark:from-zinc-800 dark:to-zinc-900 px-3'>
+      <div className='grid w-screen min-h-screen place-content-center bg-white dark:bg-gradient-to-r dark:from-zinc-800 dark:to-zinc-900 px-3 pt-28 pb-7'>
         {mode === 'normal' && !level && (
           <>
             <h2 className='text-3xl text-center mb-6 font-bold text-pink-600 dark:text-white'>
@@ -432,17 +465,36 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
                   <Tile key={i} flip={() => flip(i)} {...tile} />
                 ))}
               </div>
-              <div className='flex justify-center mt-6 gap-4'>
-                <button
-                  className='bg-indigo-300 hover:bg-indigo-400 hover:scale-105 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 transition-all ease-in-out duration-300 text-xl lg:text-2xl rounded-md text-white py-2 px-4'
-                  onClick={resetGame}>
-                  Reset Game
-                </button>
-                <button
-                  className='bg-indigo-300 hover:bg-indigo-400 hover:scale-105 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 transition-all ease-in-out duration-300 text-xl lg:text-2xl rounded-md text-white py-2 px-4'
-                  onClick={() => setTimeout(end, 0)}>
-                  Home
-                </button>
+              <div className='flex flex-col items-center gap-5 mt-6 '>
+                <div>
+                  <audio ref={audioRef} src={Sound} loop={true} />
+                  {/* toggle background music */}
+                  {backgroundMusicPlaying ? (
+                    <button
+                      className='bg-indigo-300 hover:bg-indigo-400 hover:scale-105 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 transition-all ease-in-out duration-300 text-xl lg:text-2xl rounded-md text-white py-2 px-4'
+                      onClick={stopBackgroundMusic}>
+                      Stop Music
+                    </button>
+                  ) : (
+                    <button
+                      className='bg-indigo-300 hover:bg-indigo-400 hover:scale-105 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 transition-all ease-in-out duration-300 text-xl lg:text-2xl rounded-md text-white py-2 px-4'
+                      onClick={playBackgroundMusic}>
+                      Play Music
+                    </button>
+                  )}
+                </div>
+                <div className='flex justify-center flex-wrap gap-4'>
+                  <button
+                    className='bg-indigo-300 hover:bg-indigo-400 hover:scale-105 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 transition-all ease-in-out duration-300 text-xl lg:text-2xl rounded-md text-white py-2 px-4'
+                    onClick={resetGame}>
+                    Reset Game
+                  </button>
+                  <button
+                    className='bg-indigo-300 hover:bg-indigo-400 hover:scale-105 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 transition-all ease-in-out duration-300 text-xl lg:text-2xl rounded-md text-white py-2 px-4'
+                    onClick={() => setTimeout(end, 0)}>
+                    Home
+                  </button>
+                </div>
               </div>
             </div>
             <div
@@ -458,7 +510,7 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
                     {playerNames.player1 || 'Player 1'}
                   </div>
                   <div className='px-3 lg:pb-1 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
-                  {scoresRef.current.player1}
+                    {scoresRef.current.player1}
                   </div>
                 </div>
 
@@ -467,7 +519,7 @@ export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboar
                     {playerNames.player2 || 'Player 2'}
                   </div>
                   <div className='px-3 lg:pb-1 bg-indigo-200 dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900 text-indigo-500 dark:text-white text-xl lg:text-3xl rounded-lg font-semibold flex items-center'>
-                  {scoresRef.current.player2}
+                    {scoresRef.current.player2}
                   </div>
                 </div>
               </div>
