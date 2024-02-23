@@ -3,6 +3,7 @@ import confetti from 'canvas-confetti';
 import * as icons from 'react-icons/gi';
 import { Tile } from './Tile';
 import Modal from './Modal';
+import { updateChallLeaderboard, updateLeaderboard } from './Leaderboard';
 
 export const possibleTileContents = [
   icons.GiHearts,
@@ -53,7 +54,7 @@ export function StartScreen({ start, setGridSize, gridSize }) {
   );
 
   return (
-    <div className='grid min-h-screen place-content-center w-screen bg-white dark:bg-zinc-900 p-3'>
+    <div className='grid min-h-screen place-content-center w-screen bg-white dark:bg-zinc-900 p-3 pt-28'>
       <div className='flex flex-col items-center bg-pink-50 dark:bg-gradient-to-tr dark:from-pink-400 dark:to-pink-600 rounded-xl pt-20 pb-20 w-[85vw] max-w-2xl'>
         <h1 className='text-pink-500 dark:text-white text-4xl mb-10 font-semibold tracking-tight'>
           Memory
@@ -77,7 +78,7 @@ export function StartScreen({ start, setGridSize, gridSize }) {
   );
 }
 
-export function PlayScreen({ mode, end, gridSize }) {
+export function PlayScreen({ mode, end, gridSize, leaderboardData, setLeaderboardData, challengeLeaderboard, setChallengeLeaderboard }) {
   const [tiles, setTiles] = useState(null);
   const [tryCount, setTryCount] = useState(0);
   const [remainingTime, setRemainingTime] = useState(300);
@@ -272,9 +273,21 @@ export function PlayScreen({ mode, end, gridSize }) {
 
             setShowModal(true);
 
-            setTimeout(() => {
-              resetGame();
-            }, 3000);
+     
+              if (mode === 'normal') {
+                // Update normal play leaderboard
+                updateLeaderboard(leaderboardData, setLeaderboardData, level, 'You', tryCount); 
+              } else {
+                const currentDate = new Date();
+                const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+                updateChallLeaderboard(challengeLeaderboard, setChallengeLeaderboard, playerNames.player1, playerNames.player2, formattedDate, scoresRef.current.player1, scoresRef.current.player2);
+              }
+
+              setTimeout(()=>{
+                resetGame();
+              },3000)
+           
+        
           }
 
           return newTiles;
@@ -303,7 +316,7 @@ export function PlayScreen({ mode, end, gridSize }) {
             <h2 className='text-3xl text-center mb-6 font-bold text-pink-600 dark:text-white'>
               Select Level
             </h2>
-            <div className='flex justify-center gap-4 flex-wrap mb-6'>
+            <div className='flex justify-center gap-4 flex-wrap my-6'>
               <button
                 onClick={() => handleLevelSelect('easy')}
                 className='text-white pt-2 pb-3 w-44 bg-gradient-to-t from-pink-600 to-pink-400 rounded-full text-xl md:text-2xl shadow-xl ring-2 ring-pink-400 transition-all duration-300 ease-out hover:scale-105'>
@@ -322,7 +335,7 @@ export function PlayScreen({ mode, end, gridSize }) {
             </div>
 
             <button
-              className='bg-white shadow hover:scale-105 transition-all ease-in-out duration-300 text-xl lg:text-2xl rounded-md text-pink-500 py-5 px-4 mt-5 border border-grey-400 mx-10'
+              className='underline hover:text-pink-700 transition-all ease-in-out duration-300 text-xl lg:text-2xl rounded-md text-pink-500 py-5 px-4 mt-5 mx-10'
               onClick={() => setTimeout(end, 0)}>
               Back to Home
             </button>
