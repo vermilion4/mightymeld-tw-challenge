@@ -1,4 +1,4 @@
-export function Tile({ content: Content, flip, state }) {
+export function Tile({ content: Content, flip, state, shake }) {
   switch (state) {
     case "start":
       return (
@@ -9,7 +9,7 @@ export function Tile({ content: Content, flip, state }) {
       );
     case "flipped":
       return (
-        <Front className="inline-block size-10 sm:size-16 lg:size-20 bg-indigo-500 p-2 rounded-lg text-white dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600">
+        <Front className={`inline-block ${shake && 'animate-shake'} size-10 sm:size-16 lg:size-20 bg-indigo-500 p-2 rounded-lg text-white dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600`}>
           <Content
             style={{
               display: "inline-block",
