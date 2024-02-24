@@ -105,6 +105,7 @@ export function PlayScreen({
   const [startChallenge, setStartChallenge] = useState(false);
   const [backgroundMusicPlaying, setBackgroundMusicPlaying] = useState(false);
   const audioRef = useRef(null);
+  const [shake, setShake] = useState(false)
 
   const playBackgroundMusic = () => {
     audioRef.current.play();
@@ -230,6 +231,10 @@ export function PlayScreen({
 
       let newState = 'start';
 
+      if (alreadyFlippedTile.content !== justFlippedTile.content){
+        setShake(true)
+      }
+
       if (alreadyFlippedTile.content === justFlippedTile.content) {
         confetti({
           ticks: 100,
@@ -245,6 +250,7 @@ export function PlayScreen({
 
       setTimeout(() => {
         setCurrentPlayer((prevPlayer) => (prevPlayer === 1 ? 2 : 1));
+        setShake(false)
       }, 1000);
 
       // After a delay, either flip the tiles back or mark them as matched.
@@ -462,7 +468,7 @@ export function PlayScreen({
                     : 'grid-cols-5 gap-3 p-3'
                 } mx-auto bg-indigo-50 rounded-lg dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900`}>
                 {getTiles(gridSize).map((tile, i) => (
-                  <Tile key={i} flip={() => flip(i)} {...tile} />
+                  <Tile shake={shake} key={i} flip={() => flip(i)} {...tile} />
                 ))}
               </div>
               <div className='flex flex-col items-center gap-5 mt-6 '>
