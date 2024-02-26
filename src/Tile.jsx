@@ -3,13 +3,17 @@ export function Tile({ content: Content, flip, state, shake }) {
     case "start":
       return (
         <Back
-          className="size-10 sm:size-16 lg:size-20 bg-indigo-300 text-center rounded-lg cursor-pointer hover:ring-2 ring-indigo-200 transition-all duration-300 ease-out flex items-center justify-center border-2 border-indigo-200"
+          className="hover:scale-105 size-10 sm:size-16 lg:size-20 bg-indigo-300 text-center rounded-lg cursor-pointer hover:ring-2 ring-indigo-200 transition-all duration-300 ease-out flex items-center justify-center border-2 border-indigo-200"
           flip={flip}
         />
       );
     case "flipped":
       return (
-        <Front className={`inline-block ${shake && 'animate-shake'} size-10 sm:size-16 lg:size-20 bg-indigo-500 p-2 rounded-lg text-white dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600`}>
+        <Front
+          className={`inline-block ${
+            shake && "animate-shake"
+          } size-10 sm:size-16 lg:size-20 bg-indigo-500 p-2 rounded-lg text-white dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600 rotatey-90`}
+        >
           <Content
             style={{
               display: "inline-block",
@@ -39,7 +43,11 @@ export function Tile({ content: Content, flip, state, shake }) {
 }
 
 function Back({ className, flip }) {
-  return <div onClick={flip} className={className}><p className="text-white text-4xl font-black">?</p></div>;
+  return (
+    <div onClick={flip} className={className}>
+      <p className="text-white text-4xl font-bold">?</p>
+    </div>
+  );
 }
 
 function Front({ className, children }) {
