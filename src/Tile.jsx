@@ -3,7 +3,7 @@ export function Tile({ content: Content, flip, state, shake }) {
     case "start":
       return (
         <Back
-          className="hover:scale-105 size-10 sm:size-16 lg:size-20 bg-indigo-300 text-center rounded-lg cursor-pointer hover:ring-2 ring-indigo-200 transition-all duration-300 ease-out flex items-center justify-center border-2 border-indigo-200"
+          className="hover:scale-105 size-12 sm:size-16 lg:size-20 bg-indigo-300 text-center rounded-lg cursor-pointer hover:ring-2 ring-indigo-200 transition-all duration-300 ease-out flex items-center justify-center border-2 border-indigo-200"
           flip={flip}
         />
       );
@@ -12,7 +12,7 @@ export function Tile({ content: Content, flip, state, shake }) {
         <Front
           className={`inline-block ${
             shake && "animate-shake"
-          } size-10 sm:size-16 lg:size-20 bg-indigo-500 p-2 rounded-lg text-white dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600 rotatey-90`}
+          } size-12 sm:size-16 lg:size-20 bg-indigo-500 p-2 rounded-lg text-white dark:bg-gradient-to-b dark:from-indigo-500 dark:to-indigo-600 rotatey-90`}
         >
           <Content
             style={{
@@ -26,7 +26,7 @@ export function Tile({ content: Content, flip, state, shake }) {
       );
     case "matched":
       return (
-        <Matched className="inline-block size-10 sm:size-16 p-2 lg:size-20 text-indigo-200 dark:text-indigo-300">
+        <Matched className="inline-block size-12 sm:size-16 p-2 lg:size-20 text-indigo-200 dark:text-indigo-300">
           <Content
             style={{
               display: "inline-block",
@@ -45,7 +45,7 @@ export function Tile({ content: Content, flip, state, shake }) {
 function Back({ className, flip }) {
   return (
     <div onClick={flip} className={className}>
-      <p className="text-white text-4xl font-bold">?</p>
+      <p className="text-white text-lg lg:text-4xl font-bold">?</p>
     </div>
   );
 }

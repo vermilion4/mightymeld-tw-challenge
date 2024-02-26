@@ -56,7 +56,7 @@ export function StartScreen({ start, setGridSize, gridSize }) {
 
   return (
     <div className='grid min-h-screen place-content-center w-screen bg-white dark:bg-zinc-900 p-3 pt-28'>
-      <div className='flex flex-col items-center bg-pink-50 dark:bg-gradient-to-tr dark:from-pink-400 dark:to-pink-600 rounded-xl pt-20 pb-20 w-[85vw] max-w-2xl'>
+      <div className='flex flex-col items-center bg-pink-50 dark:bg-gradient-to-tr dark:from-pink-400 dark:to-pink-600 rounded-xl pt-20 pb-20 w-[90vw] max-w-2xl px-2'>
         <h1 className='text-pink-500 dark:text-white text-4xl mb-10 font-semibold tracking-tight'>
           Memory
         </h1>
@@ -464,8 +464,8 @@ export function PlayScreen({
               <div
                 className={`grid ${
                   gridSize === 16
-                    ? 'grid-cols-4 gap-5 p-5'
-                    : 'grid-cols-5 gap-3 p-3'
+                    ? 'grid-cols-4 gap-3 p-4'
+                    : 'grid-cols-5 gap-2 p-3'
                 } mx-auto bg-indigo-50 rounded-lg dark:bg-gradient-to-b dark:from-indigo-800 dark:to-indigo-900`}>
                 {getTiles(gridSize).map((tile, i) => (
                   <Tile shake={shake} key={i} flip={() => flip(i)} {...tile} />
